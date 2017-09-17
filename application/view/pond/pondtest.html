@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+  {include file="header" /}
+  <script src="/public/third-party/ace/ace.js"></script>
+  <script src="/public/common/boot.js"></script>
+  <script src="/public/common/duckchange.js"></script>
+  <link rel="stylesheet" href="/public/common/common.css">
+  <link rel="stylesheet" href="/public/pondtest/style.css">
+  <link rel="stylesheet" href="/public/pondtest/duck/style.css">
+  
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+
+<div class="wrapper">
+
+	{include file="top" /}
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+     
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        训练塘
+      </h1>
+		  <div class="form-group">  
+		<form class="form-inline" onkeydown="if(event.keyCode==13){return false;}" role="form">
+			  <div class="form-group">
+				<label for="name">当前加载的脚本：{$sname}</label>
+				<input type="text" class="form-control" id="sname" value='{$sname}' placeholder="请为脚本命名">
+			  </div>
+			  <button type="button" onclick="saveScript()" class="btn btn-success">保存脚本</button>
+		</form>
+	</div>  
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+		<div class="row">
+		
+			<div class="col-sm-3">
+			     <div class="form-group">
+                  <label>选手1</label>
+                  <select class="form-control" id="player1">
+				  <option value='0'>--无--</option>
+                    <option value='-1'>兔子</option>
+                    <option value='-2'>计数者</option>
+                    <option value='-3'>堡垒</option>
+                    <option value='-4'>狙击手</option>
+                    <option value='1'>(玩家){$sname}</option>
+                  </select>
+                </div>
+			</div>
+			<div class="col-sm-3">
+			     <div class="form-group">
+                  <label>选手2</label>
+                  <select class="form-control" id="player2">
+				  <option value='0'>--无--</option>
+                    <option value='-1'>兔子</option>
+                    <option value='-2'>计数者</option>
+                    <option value='-3'>堡垒</option>
+                    <option value='-4'>狙击手</option>
+					<option value='1'>(玩家){$sname}</option>
+                  </select>
+                </div>
+			</div>
+						<div class="col-sm-3">
+			     <div class="form-group">
+                  <label>选手3</label>
+                  <select class="form-control" id="player3">
+				  <option value='0'>--无--</option>
+                    <option value='-1'>兔子</option>
+                    <option value='-2'>计数者</option>
+                    <option value='-3'>堡垒</option>
+                    <option value='-4'>狙击手</option>
+					<option value='1'>(玩家){$sname}</option>
+                  </select>
+                </div>
+			</div>
+						<div class="col-sm-3">
+			     <div class="form-group">
+                  <label>选手4</label>
+                  <select class="form-control" id="player4">
+				  <option value='0'>--无--</option>
+                    <option value='-1'>兔子</option>
+                    <option value='-2'>计数者</option>
+                    <option value='-3'>堡垒</option>
+                    <option value='-4'>狙击手</option>
+					<option value='1'>(玩家){$sname}</option>
+                  </select>
+                </div>
+			</div>
+		
+		</div>
+      <div id="pond_game_content" class="row">
+	   
+	  </div>
+
+    </section>
+    <!-- /.content -->
+  
+  <!-- 
+  {include file="footer" /}-->
+  </div>
+</div>
+<!-- ./wrapper -->
+
+
+<script>
+
+
+$("select#player1").change(function(){
+     //console.log($(this).val());
+	 updateUser();
+ });
+ $("select#player2").change(function(){
+     //console.log($(this).val());
+	 updateUser();
+ });
+ $("select#player3").change(function(){
+     //console.log($(this).val());
+	 updateUser();
+ });
+ $("select#player4").change(function(){
+     //console.log($(this).val());
+	 updateUser();
+ }); 
+ 
+ 
+function setScriptData() { 
+	if({$isBlock}==0){
+		Pond.Duck.changeTab(1);
+	
+		Pond.Duck.blocksEnabled_ = false;
+		
+		var defaultCode = '{$script}';
+	    BlocklyInterface.editor['setValue'](defaultCode, -1);
+		
+		
+
+		  
+	}else{
+		Pond.Duck.changeTab(0);
+	
+	    console.log("block!");
+		Pond.Duck.blocksEnabled_ = true;
+
+		
+		var defaultXml ='{$script}';
+		var xml = Blockly.Xml.textToDom(defaultXml);
+		// Clear the workspace to avoid merge.
+		BlocklyGames.workspace.clear();
+		Blockly.Xml.domToWorkspace(xml, BlocklyGames.workspace);
+		BlocklyGames.workspace.clearUndo();
+		
+		
+	}
+  
+}
+ 
+ function getUserScript(){
+ 		
+         if (Pond.Duck.blocksEnabled_) {
+		    var xml = Blockly.Xml.workspaceToDom(BlocklyGames.workspace);
+			var xmlData = Blockly.Xml.domToText(xml);
+           return xmlData.replace(new RegExp("'",'gm'),'');
+         } else {
+           return BlocklyInterface.editor['getValue']().replace(new RegExp("'",'gm'),'"');
+		   }
+ 
+ }
+ 
+ function saveScript(){
+ 
+	script=getUserScript();//return false;
+	console.log(script);
+	sid=$("#sid").val();
+	sname=$("#sname").val().replace(new RegExp("'",'gm'),'');
+	if(Pond.Duck.blocksEnabled_==true)isBlock=1;
+	else isBlock=0;
+	
+	if(sname.length<=0){
+		alert("请输入要保存的脚本名称");
+		return false;
+	}
+	
+	
+	if(!confirm("将覆盖你的同名脚本（"+sname+"），确定吗？")){
+		return false;
+	}
+	
+	
+	$.ajax({
+		type:"POST",
+		url:"{:url('index/pond/saveScript')}",
+		dataType:"json",
+		data:{
+			sid:sid,
+			sname:sname,
+			script:script,
+			isBlock:isBlock
+			},
+		success:function (msg)
+		{
+			console.log(msg);
+			if (msg.status==0)
+			{
+				//success
+				alert("保存成功");
+				
+			}else
+			{
+				//error
+				alert("保存出错");
+				
+			}
+			
+			return false;
+
+		},
+		error:function (msg)
+		{
+			console.log(msg);
+			
+			return false;
+
+		}
+	});
+	
+	
+	return false;
+ }
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+  {include file="header" /}
+</head>
+<body class="hold-transition skin-blue sidebar-mini">
+<div class="wrapper">
+
+	{include file="top" /}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <h1>
+        脚本列表
+        <small>大家创作的小鸭子AI</small>
+      </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+      
+      <!-- Main row -->
+      <div class="row">
+        <div class="col-xs-12 table-responsive">
+          <table class="table table-striped">
+            <thead>
+            <tr>
+              <th>名字</th>
+              <th>作者</th>
+              <th>发布时间</th>
+			  <th>胜率</th>
+              <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+			
+			{volist name="ducks" id="d"}
+			<tr>
+				<td>{$d.name}</td>
+				<td><a href='{:url("/index/index/userinfo/tname/".$d.creater)}'>{$d.creater}</a></td>
+				<td>{$d.createtime}</td>
+				<td>{$d.win_rate}%</td>
+				<td>
+				{eq name="$d.creater" value="$uname"}
+					<a class='btn btn-success'  href='javascript:editSelfDuck("{$d.id}");'>编辑</a></td>
+				{else/}
+					<a class='btn btn-warning'  href='javascript:chooseSelfDuck("{$d.id}");'>比试</a></td>
+				{/eq}
+				
+			</tr>
+			{/volist}
+			
+
+            </tbody>
+          </table>
+        </div>
+        <!-- /.col -->
+		
+
+      </div>
+      <!-- /.row -->
+	  
+	  
+
+	
+	
+    </section>
+    <!-- /.content -->
+  </div>
+  <!-- 
+  {include file="footer" /}-->
+
+  
+</div>
+<!-- ./wrapper -->
+
+	  <div class="modal fade" id="chooseDuck" tabindex="-1" role="dialog">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					选择你要作战的小鸭子AI
+				</h4>
+			</div>
+			<div class="modal-body">
+				<select class="form-control" id="myduck">
+					{volist name="myducks" id="md"}
+						 <option value='{$md.id}'>{$md.name}</option>
+					{/volist}
+				   
+				</select>
+			</div>
+			<div class="modal-footer">
+				<a href="javascript:startMatch();" class="btn btn-success">开始比赛</a>
+				<a href="#" class="btn" data-dismiss="modal">关闭</a>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+	
+<script>
+
+function post(URL, PARAMS) {
+  console.log(URL);
+  var temp = document.createElement("form");
+  temp.action = URL;
+  temp.method = "post";
+  temp.style.display = "none";
+  for (var x in PARAMS) {
+    var opt = document.createElement("textarea");
+    opt.name = x;
+    opt.value = PARAMS[x];
+    // alert(opt.name)
+    temp.appendChild(opt);
+  }
+  document.body.appendChild(temp);
+  temp.submit();
+  return temp;
+}
+
+var targetid;
+function startMatch(){
+	myid=$("select#myduck").val();console.log(myid);
+	post('{:url("/index/pond/pondmatch")}',{ id1:myid,id2:window.targetid });
+	return false;
+}
+
+function chooseSelfDuck(id){
+	if($("select#myduck").val()==null){
+	
+		// dont have any duck
+		alert("你还没有任何小鸭子AI，所以无法进行比赛。去“训练塘”创建你的小鸭子AI吧！");
+		return false;
+	}
+	window.targetid=id;
+	$("#chooseDuck").modal('show');  
+	return false;
+}
+
+function editSelfDuck(id){
+	post('{:url("/index/pond/pondtest")}',{ sid:id });
+	return false;
+}
+
+</script>
+
+</body>
+</html>
