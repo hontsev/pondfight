@@ -10,7 +10,7 @@ class Pond extends \think\Controller
 		
 		$uname=Session::get('uname');
 		if($uname==null){
-			return $this->redirect('index/user/login');
+			return $this->redirect('user/login');
 		}else{
 			$title="池塘大战 - 训练塘";
 			$this->assign('title',$title);
@@ -64,9 +64,9 @@ class Pond extends \think\Controller
 		
 		$uname=Session::get('uname');
 		if($uname==null  ){
-			return $this->redirect('index/user/login');
+			return $this->redirect('user/login');
 		}else if(!Request::instance()->has("id1")){
-			return $this->redirect('index/index/ducklist');
+			return $this->redirect('index/ducklist');
 		}
 		else{
 			
@@ -125,7 +125,7 @@ class Pond extends \think\Controller
 	}
     	
 	public function index(){
-		return $this->redirect('index/pond/pondtest');
+		return $this->redirect('pond/pondtest');
 
 	}
 	

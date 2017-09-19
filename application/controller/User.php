@@ -34,7 +34,7 @@ class User extends \think\Controller
 				Session::set('uid',$res[0]['id']); 
 				Session::set('uname',$name); 
 				Session::set('uavatar',$res[0]['avatar']);
-				return $this->redirect('Index/index');
+				return $this->redirect('index/index');
 			}
 			return $res;			
 		}
@@ -77,7 +77,7 @@ class User extends \think\Controller
 			}else{
 				//success
 				$avatar="/public/static/avatar_default.jpg";
-				Db::execute('insert into user (name,pw,avatar) values (?, ?)',[$name,$pw,$avatar]);
+				Db::execute('insert into user (name,pw,avatar) values (?, ?,?)',[$name,$pw,$avatar]);
 				$uid=Db::query('select max(id) id from user'); 
 				Session::set('uid',$uid); 
 				Session::set('uname',$name);
@@ -95,11 +95,11 @@ class User extends \think\Controller
 		Session::delete('uid');
 		Session::delete('uname');
 		Session::delete('uavatar');
-		return $this->redirect('Index/user/login');
+		return $this->redirect('user/login');
 	}
 	
 	public function index(){
-		return $this->redirect('Index/user/login');
+		return $this->redirect('user/login');
 	}
 	
 }

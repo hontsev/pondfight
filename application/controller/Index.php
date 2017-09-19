@@ -9,7 +9,7 @@ class Index extends \think\Controller
 	public function index()
 	{
 
-		return $this->redirect('index/index/userinfo');
+		return $this->redirect('index/userinfo');
 	}
 	
 	
@@ -17,21 +17,14 @@ class Index extends \think\Controller
 		
 		$uname=Session::get('uname');
 		if($uname==null){
-			return $this->redirect('index/user/login');
+			return $this->redirect('user/login');
 		}else{
-			$title="池塘大战";
+			$title="池塘大战 - 脚本列表";
 			$this->assign('title',$title);
 			$this->assign('uname',$uname);
 			$this->assign('uavatar',Session::get('uavatar'));
 			
-			$ducks=Db::query('select id,name,creater,createtime,win_count,lose_count,win_count/if(lose_count+win_count+draw_count>0,lose_count+win_count+draw_count,1) win_rate from duck where isdelete=0 order by createtime desc');
-			
-			
-			for($i=0;$i<sizeof($ducks);$i++){
-				// get win rate
-				$ducks[$i]['win_rate']=number_format($ducks[$i]['win_rate']*100,1);
-				
-			}
+			$ducks=Db::table('duck')->field("id,name,creater,createtime,win_count,lose_count,win_count*100/(lose_count+win_count+draw_count) as win_rate")->where("isdelete","0")->order("createtime desc")->paginate(10);
 			
 			$myducks=Db::query('select id,name from duck where creater=? and isdelete=0 order by id desc',[$uname]);
 			
@@ -46,7 +39,7 @@ class Index extends \think\Controller
 
 		$uname=Session::get('uname');
 		if($uname==null){
-			return $this->redirect('index/user/login');
+			return $this->redirect('user/login');
 		}else{
 			if(sizeof($this->request->route())<=0 || $this->request->route()['tname']==$uname){
 				//self
@@ -111,7 +104,7 @@ class Index extends \think\Controller
 			$this->assign('winrate',$winrate);
 			
 		
-			$title="池塘大战";
+			$title="池塘大战 - 用户信息";
 			$this->assign('title',$title);
 			$this->assign('uname',$uname);
 			$this->assign('uavatar',Session::get('uavatar'));

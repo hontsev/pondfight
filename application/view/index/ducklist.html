@@ -40,15 +40,15 @@
 			{volist name="ducks" id="d"}
 			<tr>
 				<td>{$d.name}</td>
-				<td><a href='{:url("/index/index/userinfo/tname/".$d.creater)}'>{$d.creater}</a></td>
+				<td><a href='{:url("/index/userinfo/tname/".$d.creater)}'>{$d.creater}</a></td>
 				<td>{$d.createtime}</td>
-				<td>{$d.win_rate}%</td>
-				<td>
+				<td>{:number_format($d.win_rate,1)}%</td>
+				<td><a class='btn btn-warning'  href='javascript:chooseSelfDuck("{$d.id}");'>比试</a>
 				{eq name="$d.creater" value="$uname"}
-					<a class='btn btn-success'  href='javascript:editSelfDuck("{$d.id}");'>编辑</a></td>
-				{else/}
-					<a class='btn btn-warning'  href='javascript:chooseSelfDuck("{$d.id}");'>比试</a></td>
+					<a class='btn btn-success'  href='javascript:editSelfDuck("{$d.id}");'>编辑</a>
 				{/eq}
+				</td>
+				
 				
 			</tr>
 			{/volist}
@@ -57,6 +57,7 @@
             </tbody>
           </table>
         </div>
+		{$ducks->render()}
         <!-- /.col -->
 		
 
@@ -129,7 +130,7 @@ function post(URL, PARAMS) {
 var targetid;
 function startMatch(){
 	myid=$("select#myduck").val();console.log(myid);
-	post('{:url("/index/pond/pondmatch")}',{ id1:myid,id2:window.targetid });
+	post('{:url("/pond/pondmatch")}',{ id1:myid,id2:window.targetid });
 	return false;
 }
 
@@ -146,7 +147,7 @@ function chooseSelfDuck(id){
 }
 
 function editSelfDuck(id){
-	post('{:url("/index/pond/pondtest")}',{ sid:id });
+	post('{:url("pond/pondtest")}',{ sid:id });
 	return false;
 }
 
